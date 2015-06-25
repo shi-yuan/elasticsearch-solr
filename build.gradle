@@ -1,0 +1,75 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'jetty'
+
+// solve gradle download dependency error
+configurations.all {
+    resolutionStrategy {
+        force 'xml-apis:xml-apis:1.4.01'
+    }
+}
+
+ext {
+    springVersion = '4.1.5.RELEASE'
+    javaCompatibility = '1.7'
+}
+
+allprojects {
+    version = 1.0
+    repositories {
+        mavenLocal()
+        //maven { url "http://maven.oschina.net/content/groups/public/" }
+        mavenCentral()
+    }
+
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = javaCompatibility
+        targetCompatibility = javaCompatibility
+        options.encoding = "UTF-8"
+    }
+}
+
+dependencies {
+    // logging
+    compile 'org.slf4j:slf4j-api:1.7.10'
+    runtime 'org.slf4j:slf4j-log4j12:1.7.10'
+
+    // spring
+    compile "org.springframework:spring-webmvc:$springVersion"
+    compile "org.springframework:spring-tx:$springVersion"
+    compile "org.springframework:spring-web:$springVersion"
+    compile "org.springframework:spring-test:$springVersion"
+
+    // for spring-mvc json
+    compile 'com.fasterxml.jackson.core:jackson-core:2.5.1'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.5.1'
+    testRuntime 'com.jayway.jsonpath:json-path:1.2.0'
+
+    // web
+    compile 'taglibs:standard:1.1.2'
+    compile 'javax.servlet:jstl:1.2'
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+
+    //
+    compile 'org.elasticsearch:elasticsearch:1.6.0'
+    compile 'org.apache.httpcomponents:httpclient:4.5'
+    compile 'org.apache.httpcomponents:httpmime:4.5'
+
+    // common
+    compile 'org.apache.commons:commons-lang3:3.3.2'
+    compile 'com.google.guava:guava:18.0'
+
+    // provide Unicode and Globalization support
+    runtime 'com.ibm.icu:icu4j:54.1.1'
+
+    // test
+    testCompile 'junit:junit:4.12'
+}
+
+//
+jettyRun {
+    httpPort = 8088
+    contextPath = ""
+    reload = "automatic"
+    scanIntervalSeconds = 1
+}
