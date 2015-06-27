@@ -40,7 +40,7 @@ public class SolrController {
 
     private String requestHandler;
     private String uniqueKey;
-    private int rows = 500;
+    private int rows = 5000;
 
     private volatile BulkProcessor bulkProcessor;
 
@@ -77,7 +77,7 @@ public class SolrController {
             public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
                 logger.warn("Error executing bulk: {}", failure);
             }
-        }).setBulkActions(1000).setConcurrentRequests(10).setFlushInterval(TimeValue.timeValueSeconds(30)).build();
+        }).setBulkActions(1000).setConcurrentRequests(10).setFlushInterval(TimeValue.timeValueSeconds(10)).build();
 
         this.httpClient = HttpClients.createDefault();
         this.uniqueKey = DEFAULT_UNIQUE_KEY;
@@ -87,7 +87,6 @@ public class SolrController {
         this.objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
         start();
-        client.close();
 
         return "success";
     }
